@@ -1,5 +1,18 @@
 #include <allegro.h>
 
+// Add a framerate counter //////////////////////////////////////////////////
+// based on: http://wiki.allegro.cc/index.php?title=Timers#FPS
+int fps = 0;
+int frames_done = 0;
+int old_ticks = 0;
+
+volatile int ticks = 0;
+void ticker()
+{
+    ticks++;
+}
+END_OF_FUNCTION(ticker);
+
 // D E F I N E S ////////////////////////////////////////////////////////////
 #define FIRE_W 640      // width of fire
 #define FIRE_H 240      // height of fire
@@ -153,7 +166,7 @@ void do_fire()
 
     while(!keypressed())
     {
-        for (int r = 0; r < 5; r++)
+        for (int r = 0; r < 3; r++)
         {
             for (int i = 0; i < NUM_HOTSPOTS; i++)
             {
@@ -168,21 +181,38 @@ void do_fire()
                 add_hotspot(prev, hotspots[i].x, hotspots[i].y, 8, 50);
             }
 
-            mouse_projection_x = FIRE_W*mouse_x/SCREEN_W;
-            mouse_projection_y = FIRE_H*mouse_y/SCREEN_H;
+            mouse_projection_x = FIRE_W * mouse_x / SCREEN_W;
+            mouse_projection_y = FIRE_H * mouse_y / SCREEN_H;
 
             add_hotspot(prev, mouse_projection_x, mouse_projection_y, 8, 200);
 
             calc_fire(prev, curr);
-            draw_fire(curr, buf);
+
             temp = curr;
             curr = prev;
             prev = temp;
         }
+		draw_fire(prev, buf);
 
-        acquire_screen();
+		acquire_screen();
         stretch_blit(buf, screen, 0, 0, FIRE_W, FIRE_H, 0, 0, SCREEN_W, SCREEN_H);
+        textprintf_ex(screen, font, 10, 10, makecol(255, 255, 255), -1, "fire by wonsungi [frames/sec:%3d]", fps);
         release_screen();
+
+		frames_done++;
+
+        if(ticks - old_ticks >= 10)//i.e. a second has passed since we last measured the frame rate
+        {
+            fps = frames_done;
+            //fps now holds the the number of frames done in the last second
+            //you can now output it using textout_ex et al.
+
+            //reset for the next second
+            frames_done = 0;
+            old_ticks = ticks;
+        }
+
+
     }
 
     free(prev);
@@ -235,11 +265,18 @@ int gfx_w = 800;
 int gfx_h = 600;
 int gfx_bpp = 8;
 
+
 int main(void)
 {
     /* you should always do this at the start of Allegro programs */
     if (allegro_init() != 0)
         return 1;
+
+    install_timer();
+
+    LOCK_VARIABLE(ticks);
+    LOCK_FUNCTION(ticker);
+    install_int_ex(ticker, BPS_TO_TIMER(10));//i.e. game time is in tenths of seconds
 
     /* set up the keyboard handler */
     install_keyboard();
