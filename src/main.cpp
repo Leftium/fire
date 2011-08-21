@@ -1,3 +1,4 @@
+#include <time.h>
 #include <allegro.h>
 
 // Add a framerate counter //////////////////////////////////////////////////
@@ -268,6 +269,8 @@ int gfx_bpp = 8;
 
 int main(void)
 {
+    srand(time(NULL));
+
     /* you should always do this at the start of Allegro programs */
     if (allegro_init() != 0)
         return 1;
