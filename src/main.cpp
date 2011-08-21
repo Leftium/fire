@@ -303,8 +303,12 @@ int main(void)
     gui_bg_color = 0;
 
     gfx_bpp = desktop_color_depth();
-    if (!gfx_mode_select_ex(&gfx_card, &gfx_w, &gfx_h, &gfx_bpp)) {
-        return -1;
+
+    //  If CTRL key pressed bring up graphics mode selection dialog only
+    if (key_shifts & KB_CTRL_FLAG) {
+        if (!gfx_mode_select_ex(&gfx_card, &gfx_w, &gfx_h, &gfx_bpp)) {
+            return -1;
+        }
     }
 
     if (gfx_bpp != 0) {
