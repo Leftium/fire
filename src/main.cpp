@@ -14,6 +14,15 @@ void ticker()
 }
 END_OF_FUNCTION(ticker);
 
+// Handle the close button
+volatile int done = FALSE;
+void close_button_handler(void)
+{
+    done = TRUE;
+}
+END_OF_FUNCTION(close_button_handler)
+
+
 // D E F I N E S ////////////////////////////////////////////////////////////
 #define FIRE_W 640      // width of fire
 #define FIRE_H 480      // height of fire
@@ -155,7 +164,7 @@ void do_fire()
         hotspots[i].speed = rnd(20);
     }
 
-    while(!keypressed())
+    while(!done)
     {
         for (int r = 0; r < 3; r++)
         {
@@ -205,7 +214,9 @@ void do_fire()
             old_ticks = ticks;
         }
 
-
+        if (key[KEY_ESC]) {
+            done = TRUE;
+        }
     }
 
     free(prev);
@@ -277,6 +288,9 @@ int main(void)
     install_keyboard();
     install_timer();
     install_mouse();
+
+    LOCK_FUNCTION(close_button_handler);
+    set_close_button_callback(close_button_handler);
 
     /* set a graphics mode sized 320x200 */
     if (set_gfx_mode(GFX_SAFE, 320, 200, 0, 0)!=0) {
