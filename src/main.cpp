@@ -115,12 +115,13 @@ void add_hotspot(USINT *fire, int x, int y, int hotspot_radius, int num_spots)
         hotspot_x += x;
         hotspot_y += y;
 
-        if (get_fire(fire, hotspot_x, hotspot_y) < 160) {
-            set_fire(fire, hotspot_x, hotspot_y, 160);
-        }
-        add_fire(fire, hotspot_x, hotspot_y, 4);
-        if (get_fire(fire, hotspot_x, hotspot_y) > 255) {
-            set_fire(fire, hotspot_x, hotspot_y, 255);
+        if (hotspot_x >= 0 && hotspot_x < FIRE_W &&
+            hotspot_y >= 0 && hotspot_y < FIRE_H) {
+
+            set_fire(fire, hotspot_x, hotspot_y,
+                     CLAMP(160,
+                           get_fire(fire, hotspot_x, hotspot_y) + 4,
+                           255));
         }
     }
 }
