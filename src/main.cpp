@@ -48,12 +48,6 @@ inline void set_fire(USINT *fire, int x, int y, USINT value)
     fire[x+2 + (FIRE_W * (y+2))] = value;
 }
 
-inline void add_fire(USINT *fire, int x, int y, USINT value)
-{
-    if (x >= 0 && x < FIRE_W && y >= 0 && y < FIRE_H) {
-        fire[x + (FIRE_W * y)] += (value % 256);
-    };
-}
 
 // find_fire /////////////////////////////////////////////////////////////////
 // -returns the proper color at (x, y) in the next frame of fire
