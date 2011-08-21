@@ -169,13 +169,15 @@ void do_fire()
                 if (hotspots[i].y <  FIRE_H-HOTSPOT_REGION) hotspots[i].y += HOTSPOT_REGION;
                 if (hotspots[i].y >= FIRE_H               ) hotspots[i].y -= HOTSPOT_REGION;
 
-                add_hotspot(prev, hotspots[i].x, hotspots[i].y, 8, 50);
+                add_hotspot(prev, hotspots[i].x, hotspots[i].y, 8, 100);
             }
 
             mouse_projection_x = FIRE_W * mouse_x / SCREEN_W;
             mouse_projection_y = FIRE_H * mouse_y / SCREEN_H;
 
-            add_hotspot(prev, mouse_projection_x, mouse_projection_y, 8, 200);
+            if (mouse_b & 1) {
+                add_hotspot(prev, mouse_projection_x, mouse_projection_y, 8, 400);
+            }
 
             calc_fire(prev, curr);
 
