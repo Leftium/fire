@@ -51,26 +51,32 @@ inline void add_fire(USINT *fire, int x, int y, USINT value)
 // -needs prev frame of fire untouched, so put new value in a diff fire array
 inline USINT fire_math(int x, int y, USINT *fire)
 {
-    USINT total = 0;
+    return (get_fire(fire, (x + 0), (y - 2)) +
 
-    total += get_fire(fire, (x + 0), (y - 1));
+            get_fire(fire, (x + 0), (y - 1)) +
 
-    total += get_fire(fire, (x - 1), (y + 0));
-    total += get_fire(fire, (x + 0), (y + 0)) * 2;
-    total += get_fire(fire, (x + 1), (y + 0));
+            get_fire(fire, (x - 1), (y + 0)) +
+            get_fire(fire, (x + 0), (y + 0)) +
+            get_fire(fire, (x + 1), (y + 0)) +
 
-    total += get_fire(fire, (x + 0), (y + 1));
+            get_fire(fire, (x + 0), (y + 1)) +
 
-    total += get_fire(fire, (x - 1), (y + 2));
-    total += get_fire(fire, (x + 1), (y + 2));
+            get_fire(fire, (x + 0), (y + 2)) +
 
-    total += get_fire(fire, (x + 0), (y + 3));
+            get_fire(fire, (x - 1), (y + 3)) +
+            get_fire(fire, (x + 1), (y + 3)) +
 
-    total += get_fire(fire, (x - 1), (y + 4));
-    total += get_fire(fire, (x + 0), (y + 4));
-    total += get_fire(fire, (x + 1), (y + 4));
+            get_fire(fire, (x - 1), (y + 4)) +
+            get_fire(fire, (x + 1), (y + 4)) +
 
-    return (total / 12);
+            get_fire(fire, (x + 0), (y + 5)) +
+
+            get_fire(fire, (x + 0), (y + 6)) +
+
+            get_fire(fire, (x - 1), (y + 7)) +
+            get_fire(fire, (x + 0), (y + 7)) +
+            get_fire(fire, (x + 1), (y + 7))
+           ) / 16;
 }
 
 // C A L C  F I R E  //////////////////////////////////////////////////////////
