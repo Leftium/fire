@@ -99,14 +99,6 @@ inline void draw_fire(USINT *fire, BITMAP *bitmap)
     }
 }
 
-// Z E R O //////////////////////////////////////////////////////////////////
-void zero(USINT *array)
-{
-    for (int i = 0; i < (FIRE_W * FIRE_H); i++) {
-        array[i] = 0;
-    }
-}
-
 void add_hotspot(USINT *fire, int x, int y, int hotspot_radius, int num_spots)
 {
     for (int j= 0; j < num_spots; j++)
@@ -140,9 +132,6 @@ void do_fire()
 
     prev = (USINT*) malloc( FIRE_W * FIRE_H * sizeof(USINT));
     curr = (USINT*) malloc( FIRE_W * FIRE_H * sizeof(USINT));
-
-    zero(prev);
-    zero(curr);
 
     BITMAP *buf;
     buf = create_bitmap(FIRE_W, FIRE_H);
