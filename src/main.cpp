@@ -295,6 +295,9 @@ int main(void)
     }
     if (set_gfx_mode(gfx_card, gfx_w, gfx_h, 0, 0) != 0) return 1;
 
+    enable_hardware_cursor();
+    select_mouse_cursor(MOUSE_CURSOR_ARROW);
+    show_mouse(screen);
     PALETTE fire;
     init_fire_palette(fire);
     do_fire();
