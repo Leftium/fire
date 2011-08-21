@@ -31,18 +31,12 @@ inline int rnd(int max)
 
 inline USINT get_fire(USINT *fire, int x, int y)
 {
-    if (x < 0 || x >= FIRE_W || y < 0 || y >= FIRE_H) {
-        return 0;
-    } else {
-        return fire[x + (FIRE_W * y)];
-    }
+    return fire[x+2 + (FIRE_W * (y+2))];
 }
 
 inline void set_fire(USINT *fire, int x, int y, USINT value)
 {
-    if (x >= 0 && x < FIRE_W && y >= 0 && y < FIRE_H) {
-        fire[x + (FIRE_W * y)] = value;
-    }
+    fire[x+2 + (FIRE_W * (y+2))] = value;
 }
 
 inline void add_fire(USINT *fire, int x, int y, USINT value)
@@ -130,8 +124,8 @@ void do_fire()
 {
     USINT *prev, *curr, *temp;;
 
-    prev = (USINT*) malloc( FIRE_W * FIRE_H * sizeof(USINT));
-    curr = (USINT*) malloc( FIRE_W * FIRE_H * sizeof(USINT));
+    prev = (USINT*) malloc( (FIRE_W + 4) * (FIRE_H + 10) * sizeof(USINT));
+    curr = (USINT*) malloc( (FIRE_W + 4) * (FIRE_H + 10) * sizeof(USINT));
 
     BITMAP *buf;
     buf = create_bitmap(FIRE_W, FIRE_H);
