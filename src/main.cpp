@@ -23,6 +23,8 @@ void close_button_handler(void)
 END_OF_FUNCTION(close_button_handler)
 
 
+PALETTE fire;
+
 // D E F I N E S ////////////////////////////////////////////////////////////
 #define FIRE_W 640      // width of fire
 #define FIRE_H 480      // height of fire
@@ -193,6 +195,10 @@ void do_fire()
 		acquire_screen();
         stretch_blit(buf, screen, 0, 0, FIRE_W, FIRE_H, 0, 0, SCREEN_W, SCREEN_H);
         textprintf_ex(screen, font, 10, 10, makecol(255, 255, 255), -1, "fire by wonsungi [frames/sec:%3d]", fps);
+
+        if (key[KEY_PRTSCR] || key[KEY_F12]) {
+            save_pcx("fire.pcx", screen, fire);
+        }
         release_screen();
 
 		frames_done++;
@@ -319,13 +325,9 @@ int main(void)
     enable_hardware_cursor();
     select_mouse_cursor(MOUSE_CURSOR_ARROW);
     show_mouse(screen);
-    PALETTE fire;
+
     init_fire_palette(fire);
     do_fire();
-
-    acquire_screen();
-    save_pcx("fire.pcx", screen, fire);
-    release_screen();
 
     return 0;
 }
