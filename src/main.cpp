@@ -16,7 +16,7 @@ END_OF_FUNCTION(ticker);
 
 // D E F I N E S ////////////////////////////////////////////////////////////
 #define FIRE_W 640      // width of fire
-#define FIRE_H 240      // height of fire
+#define FIRE_H 480      // height of fire
 
 #define NUM_HOTSPOTS 240
 #define HOTSPOT_REGION 20
@@ -254,8 +254,8 @@ void init_fire_palette(PALETTE pal)
 }
 
 int gfx_card = GFX_AUTODETECT_WINDOWED;
-int gfx_w = 800;
-int gfx_h = 600;
+int gfx_w = 640;
+int gfx_h = 480;
 int gfx_bpp = 8;
 
 
