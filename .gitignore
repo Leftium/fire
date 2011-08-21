@@ -1,2 +1,24 @@
-*.swp
-*~
+*.log
+
+# Ignore screenshot
+Fire/fire.pcx
+
+# Visual Studio files
+*/obj/*
+*/bin/*
+*.ncb
+*.suo
+*.user
+*/Debug/*
+*/Release/*
+*/Profile/*
+Debug/*
+Release/*
+Profile/*
+*.TMP
+*.tmp
+*.opensdf
+*.sdf
+*.old
+*.vsp
+ipch/
