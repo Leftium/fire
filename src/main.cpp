@@ -194,7 +194,7 @@ void do_fire()
 
 		acquire_screen();
         stretch_blit(buf, screen, 0, 0, FIRE_W, FIRE_H, 0, 0, SCREEN_W, SCREEN_H);
-        textprintf_ex(screen, font, 10, 10, makecol(255, 255, 255), -1, "fire by wonsungi [frames/sec:%3d]", fps);
+        textprintf_ex(screen, font, 10, 10, makecol(255, 255, 255), -1, "Fire! by Leftium [FPS:%3d]", fps);
 
         if (key[KEY_PRTSCR] || key[KEY_F12]) {
             save_pcx("fire.pcx", screen, fire);
