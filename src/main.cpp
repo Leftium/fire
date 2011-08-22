@@ -322,6 +322,11 @@ int main(void)
     }
     if (set_gfx_mode(gfx_card, gfx_w, gfx_h, 0, 0) != 0) return 1;
 
+    // Try to enable running in background, if possible
+    if (set_display_switch_mode(SWITCH_BACKGROUND) != 0) {
+        set_display_switch_mode(SWITCH_BACKAMNESIA);
+    }
+
     enable_hardware_cursor();
     select_mouse_cursor(MOUSE_CURSOR_ARROW);
     show_mouse(screen);
