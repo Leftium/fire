@@ -23,7 +23,9 @@ void close_button_handler(void)
 END_OF_FUNCTION(close_button_handler)
 
 
-PALETTE fire;
+PALETTE fire_palette, gray_palette;
+PALETTE *palette = &fire_palette;
+bool frame_by_frame = FALSE;
 
 // D E F I N E S ////////////////////////////////////////////////////////////
 #define FIRE_W 640      // width of fire
@@ -145,6 +147,36 @@ void do_fire()
 
     while(!done)
     {
+        if (frame_by_frame) {
+            // Pause until keypress or close icon pressed
+            while(!keypressed() && !done);
+        }
+
+        // Handle keypresses
+        if (keypressed())
+        {
+            switch(readkey() >> 8)
+            {
+                case KEY_ESC:
+                    done = TRUE;
+                    break;
+
+                case KEY_PRTSCR:
+                case KEY_F12:
+                    save_pcx("fire.pcx", screen, *palette);
+                    break;
+
+                case KEY_1: // toggle grayscale palette
+                    palette = (palette == &fire_palette ? &gray_palette : &fire_palette);
+                    set_palette(*palette);
+                    break;
+
+                case KEY_2: // toggle frame-by-frame mode
+                    frame_by_frame = !frame_by_frame;
+                    break;
+            }
+        }
+
         for (int r = 0; r < 3; r++)
         {
             for (int i = 0; i < NUM_HOTSPOTS; i++)
@@ -173,18 +205,15 @@ void do_fire()
             curr = prev;
             prev = temp;
         }
-		draw_fire(prev, buf);
+        draw_fire(prev, buf);
 
-		acquire_screen();
+        acquire_screen();
         stretch_blit(buf, screen, 0, 0, FIRE_W, FIRE_H, 0, 0, SCREEN_W, SCREEN_H);
         textprintf_ex(screen, font, 10, 10, makecol(255, 255, 255), -1, "Fire! by Leftium [FPS:%3d]", fps);
 
-        if (key[KEY_PRTSCR] || key[KEY_F12]) {
-            save_pcx("fire.pcx", screen, fire);
-        }
         release_screen();
 
-		frames_done++;
+        frames_done++;
 
         if(ticks - old_ticks >= 10)//i.e. a second has passed since we last measured the frame rate
         {
@@ -195,10 +224,6 @@ void do_fire()
             //reset for the next second
             frames_done = 0;
             old_ticks = ticks;
-        }
-
-        if (key[KEY_ESC]) {
-            done = TRUE;
         }
     }
 
@@ -244,7 +269,17 @@ void init_fire_palette(PALETTE pal)
         pal[i].g = -318+(i<<1);
         pal[i].b = 0;
     }
-    set_palette(pal);
+}
+
+// I N I T  G R A Y  P A L E T T E //////////////////////////////////////////
+void init_gray_palette(PALETTE pal)
+{
+    for (int i = 0; i < 256; i++)
+    {
+        pal[i].r = i / 4;
+        pal[i].g = i / 4;
+        pal[i].b = i / 4;
+    }
 }
 
 int gfx_card = GFX_AUTODETECT_WINDOWED;
@@ -314,7 +349,10 @@ int main(void)
     select_mouse_cursor(MOUSE_CURSOR_ARROW);
     show_mouse(screen);
 
-    init_fire_palette(fire);
+    init_fire_palette(fire_palette);
+    init_gray_palette(gray_palette);
+    set_palette(*palette);
+
     do_fire();
 
     return 0;
