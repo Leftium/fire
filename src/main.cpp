@@ -163,7 +163,9 @@ void do_fire()
 
                 case KEY_PRTSCR:
                 case KEY_F12:
+                    acquire_screen();
                     save_pcx("fire.pcx", screen, *palette);
+                    release_screen();
                     break;
 
                 case KEY_1: // toggle grayscale palette
