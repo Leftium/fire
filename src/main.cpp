@@ -26,6 +26,7 @@ END_OF_FUNCTION(close_button_handler)
 PALETTE fire_palette, gray_palette;
 PALETTE *palette = &fire_palette;
 bool frame_by_frame = FALSE;
+bool calculate_fire = TRUE;
 
 // D E F I N E S ////////////////////////////////////////////////////////////
 #define FIRE_W 800      // width of fire
@@ -176,6 +177,10 @@ void do_fire()
                 case KEY_2: // toggle frame-by-frame mode
                     frame_by_frame = !frame_by_frame;
                     break;
+
+                case KEY_3: // toggle fire calculations
+                    calculate_fire = !calculate_fire;
+                    break;
             }
         }
 
@@ -201,13 +206,19 @@ void do_fire()
                 add_hotspot(prev, mouse_projection_x, mouse_projection_y, 8, 400);
             }
 
-            calc_fire(prev, curr);
+            if (calculate_fire) {
+                calc_fire(prev, curr);
+            }
 
             temp = curr;
             curr = prev;
             prev = temp;
         }
         draw_fire(prev, buf);
+
+        if (!calculate_fire) {
+            memset(prev, 0, (FIRE_W + 4) * (FIRE_H + 10) * sizeof(USINT));
+        }
 
         acquire_screen();
         stretch_blit(buf, screen, 0, 0, FIRE_W, FIRE_H, 0, 0, SCREEN_W, SCREEN_H);
