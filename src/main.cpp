@@ -267,7 +267,7 @@ void init_fire_palette(PALETTE pal)
 
     for (int i = 175; i > 159; i--)
     {
-        pal[i].r = -637+(i<<2);    // orange   (63, 32, 0)
+        pal[i].r = -637+(i<<2);    // black   (0, 0, 0)
         pal[i].g = -318+(i<<1);
         pal[i].b = 0;
     }
