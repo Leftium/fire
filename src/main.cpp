@@ -28,8 +28,8 @@ PALETTE *palette = &fire_palette;
 bool frame_by_frame = FALSE;
 
 // D E F I N E S ////////////////////////////////////////////////////////////
-#define FIRE_W 640      // width of fire
-#define FIRE_H 480      // height of fire
+#define FIRE_W 800      // width of fire
+#define FIRE_H 600      // height of fire
 
 #define NUM_HOTSPOTS 240
 #define HOTSPOT_REGION 20
@@ -283,8 +283,8 @@ void init_gray_palette(PALETTE pal)
 }
 
 int gfx_card = GFX_AUTODETECT_WINDOWED;
-int gfx_w = 640;
-int gfx_h = 480;
+int gfx_w = 800;
+int gfx_h = 600;
 int gfx_bpp = 8;
 
 
