@@ -25,8 +25,15 @@ END_OF_FUNCTION(close_button_handler)
 
 PALETTE fire_palette, gray_palette;
 PALETTE *palette = &fire_palette;
+
+int fire_colors[4096];
+int gray_colors[4096];
+
+int *colors = fire_colors;
+
 bool frame_by_frame = FALSE;
 bool calculate_fire = TRUE;
+bool truecolor      = TRUE;
 
 // D E F I N E S ////////////////////////////////////////////////////////////
 #define FIRE_W 800      // width of fire
@@ -83,9 +90,17 @@ inline void calc_fire(USINT *prev, USINT *curr)
 // D R A W  F I R E  ////////////////////////////////////////////////////////
 inline void draw_fire(USINT *fire, BITMAP *bitmap)
 {
-    for (int y = 0; y < FIRE_H; y++) {
-        for (int x = 0; x < FIRE_W; x++) {
-            putpixel(bitmap, x, y, palette_color[get_fire(fire, x, y)]);
+    if (truecolor) {
+        for (int y = 0; y < FIRE_H; y++) {
+            for (int x = 0; x < FIRE_W; x++) {
+                putpixel(bitmap, x, y, colors[int(get_fire(fire, x, y))]);
+            }
+        }
+    } else {
+        for (int y = 0; y < FIRE_H; y++) {
+            for (int x = 0; x < FIRE_W; x++) {
+                putpixel(bitmap, x, y, palette_color[int(get_fire(fire, x, y)) >> 4]);
+            }
         }
     }
 }
@@ -110,9 +125,9 @@ void add_hotspot(USINT *fire, int x, int y, int hotspot_radius, int num_spots)
             hotspot_y >= 0 && hotspot_y < FIRE_H) {
 
             set_fire(fire, hotspot_x, hotspot_y,
-                     CLAMP(160,
-                           get_fire(fire, hotspot_x, hotspot_y) + 4,
-                           255));
+                     CLAMP(2560,
+                           get_fire(fire, hotspot_x, hotspot_y) + 64,
+                           4095));
         }
     }
 }
@@ -170,6 +185,7 @@ void do_fire()
                     break;
 
                 case KEY_1: // toggle grayscale palette
+                    colors = (colors == fire_colors ? gray_colors : fire_colors);
                     palette = (palette == &fire_palette ? &gray_palette : &fire_palette);
                     set_palette(*palette);
                     break;
@@ -180,6 +196,9 @@ void do_fire()
 
                 case KEY_3: // toggle fire calculations
                     calculate_fire = !calculate_fire;
+                    break;
+                case KEY_4: // toggle truecolor
+                    truecolor = !truecolor;
                     break;
             }
         }
@@ -284,6 +303,44 @@ void init_fire_palette(PALETTE pal)
     }
 }
 
+void init_fire_colors()
+{
+    for (int x = 0; x < 256; x++)
+    {
+        // black (0, 0, 0)
+        fire_colors[x] = makecol(0, 0, 0);
+    }
+
+    int i = 4095;
+    for (int x = 0; x < 512; x++)
+    {
+        // white (255, 255, 255)
+        fire_colors[i] = makecol(255, 255, 255);
+        i--;
+    }
+
+    for (int x = 0; x < 512; x++)
+    {
+        // yellow (255, 255, 0)
+        fire_colors[i] = makecol(255, 255, 255 - (x/2));
+        i--;
+    }
+
+    for (int x = 0; x < 256; x++)
+    {
+        // orange (255, 128, 0)
+        fire_colors[i] = makecol(255, 255 - (x/2), 0);
+        i--;
+    }
+
+    for (int x = 0; x < 256; x++)
+    {
+        // black (0, 0, 0)
+        fire_colors[i] = makecol(255 - x, 128 - (x/2), 0);
+        i--;
+    }
+}
+
 // I N I T  G R A Y  P A L E T T E //////////////////////////////////////////
 void init_gray_palette(PALETTE pal)
 {
@@ -293,6 +350,15 @@ void init_gray_palette(PALETTE pal)
         pal[i].g = i / 4;
         pal[i].b = i / 4;
     }
+}
+
+void init_gray_colors()
+{
+    for (int i = 0; i < 4096; i++)
+    {
+        gray_colors[i] = makecol(i/16, i/16, i/16);
+    }
+
 }
 
 int gfx_card = GFX_AUTODETECT_WINDOWED;
@@ -364,6 +430,8 @@ int main(void)
 
     init_fire_palette(fire_palette);
     init_gray_palette(gray_palette);
+    init_fire_colors();
+    init_gray_colors();
     set_palette(*palette);
 
     do_fire();
