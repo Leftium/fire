@@ -66,15 +66,15 @@ inline void set_fire(USINT *fire, int x, int y, USINT value)
 // -needs prev frame of fire untouched, so put new value in a diff fire array
 inline USINT fire_math(int x, int y, USINT *fire)
 {
-    return (get_fire(fire, (x + 0), (y + 1)) +
-            get_fire(fire, (x + 0), (y + 2)) +
-            get_fire(fire, (x + 0), (y + 3)) +
-            get_fire(fire, (x + 0), (y + 4)) +
-            get_fire(fire, (x - 1), (y + 5)) +
-            get_fire(fire, (x + 0), (y + 5)) +
-            get_fire(fire, (x + 1), (y + 5)) +
-            get_fire(fire, (x + 0), (y + 6))
-           ) >> 3;
+    int sum = (get_fire(fire, (x + 0), (y + 1)) +
+               get_fire(fire, (x + 0), (y + 2)) +
+               get_fire(fire, (x + 0), (y + 3)) +
+               get_fire(fire, (x + 0), (y + 4)) +
+               get_fire(fire, (x - 1), (y + 5)) +
+               get_fire(fire, (x + 0), (y + 5)) +
+               get_fire(fire, (x + 1), (y + 5)) +
+               get_fire(fire, (x + 0), (y + 6)));
+    return (sum >> 3) - (sum >> 12);
 }
 
 // C A L C  F I R E  //////////////////////////////////////////////////////////
