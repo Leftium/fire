@@ -31,7 +31,7 @@ int gray_colors[4096];
 
 int *colors = fire_colors;
 
-bool frame_by_frame = FALSE;
+bool paused = FALSE;
 bool calculate_fire = TRUE;
 bool truecolor      = TRUE;
 
@@ -163,11 +163,6 @@ void do_fire()
 
     while(!done)
     {
-        if (frame_by_frame) {
-            // Pause until keypress or close icon pressed
-            while(!keypressed() && !done);
-        }
-
         // Handle keypresses
         if (keypressed())
         {
@@ -191,7 +186,7 @@ void do_fire()
                     break;
 
                 case KEY_2: // toggle frame-by-frame mode
-                    frame_by_frame = !frame_by_frame;
+                    paused = !paused;
                     break;
 
                 case KEY_3: // toggle fire calculations
@@ -203,35 +198,36 @@ void do_fire()
             }
         }
 
-        for (int r = 0; r < 3; r++)
-        {
-            for (int i = 0; i < NUM_HOTSPOTS; i++)
+        mouse_projection_x = FIRE_W * mouse_x / SCREEN_W;
+        mouse_projection_y = FIRE_H * mouse_y / SCREEN_H;
+        if (!paused) {
+            for (int r = 0; r < 3; r++)
             {
-                hotspots[i].x += rnd(hotspots[i].speed*2) - hotspots[i].speed;
-                if (hotspots[i].x <  0     ) hotspots[i].x += FIRE_W;
-                if (hotspots[i].x >= FIRE_W) hotspots[i].x -= FIRE_W;
+                for (int i = 0; i < NUM_HOTSPOTS; i++)
+                {
+                    hotspots[i].x += rnd(hotspots[i].speed*2) - hotspots[i].speed;
+                    if (hotspots[i].x <  0     ) hotspots[i].x += FIRE_W;
+                    if (hotspots[i].x >= FIRE_W) hotspots[i].x -= FIRE_W;
 
-                hotspots[i].y += rnd(hotspots[i].speed*2) - hotspots[i].speed;
-                if (hotspots[i].y <  FIRE_H-HOTSPOT_REGION) hotspots[i].y += HOTSPOT_REGION;
-                if (hotspots[i].y >= FIRE_H               ) hotspots[i].y -= HOTSPOT_REGION;
+                    hotspots[i].y += rnd(hotspots[i].speed*2) - hotspots[i].speed;
+                    if (hotspots[i].y <  FIRE_H-HOTSPOT_REGION) hotspots[i].y += HOTSPOT_REGION;
+                    if (hotspots[i].y >= FIRE_H               ) hotspots[i].y -= HOTSPOT_REGION;
 
-                add_hotspot(prev, hotspots[i].x, hotspots[i].y, 8, 100);
+                    add_hotspot(prev, hotspots[i].x, hotspots[i].y, 8, 100);
+                }
+
+                if (mouse_b & 1) {
+                    add_hotspot(prev, mouse_projection_x, mouse_projection_y, 8, 400);
+                }
+
+                if (calculate_fire) {
+                    calc_fire(prev, curr);
+                }
+
+                temp = curr;
+                curr = prev;
+                prev = temp;
             }
-
-            mouse_projection_x = FIRE_W * mouse_x / SCREEN_W;
-            mouse_projection_y = FIRE_H * mouse_y / SCREEN_H;
-
-            if (mouse_b & 1) {
-                add_hotspot(prev, mouse_projection_x, mouse_projection_y, 8, 400);
-            }
-
-            if (calculate_fire) {
-                calc_fire(prev, curr);
-            }
-
-            temp = curr;
-            curr = prev;
-            prev = temp;
         }
         draw_fire(prev, buf);
 
