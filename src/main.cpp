@@ -229,11 +229,14 @@ void do_fire()
                 prev = temp;
             }
         }
+
+        acquire_bitmap(buf);
         draw_fire(prev, buf);
 
         if (!calculate_fire) {
             memset(prev, 0, (FIRE_W + 4) * (FIRE_H + 10) * sizeof(USINT));
         }
+        release_bitmap(buf);
 
         acquire_screen();
         stretch_blit(buf, screen, 0, 0, FIRE_W, FIRE_H, 0, 0, SCREEN_W, SCREEN_H);
