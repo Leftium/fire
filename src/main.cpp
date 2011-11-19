@@ -198,6 +198,22 @@ void do_fire()
                     shift = 0;
                     break;
 
+                case KEY_RIGHT:
+                    position_mouse(mouse_x + 1, mouse_y);
+                    break;
+
+                case KEY_LEFT:
+                    position_mouse(mouse_x - 1, mouse_y);
+                    break;
+
+                case KEY_UP:
+                    position_mouse(mouse_x, mouse_y - 1);
+                    break;
+
+                case KEY_DOWN:
+                    position_mouse(mouse_x, mouse_y + 1);
+                    break;
+
                 case KEY_PRTSCR:
                 case KEY_F12:
                     acquire_screen();
