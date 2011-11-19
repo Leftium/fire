@@ -34,6 +34,7 @@ int *colors = fire_colors;
 bool paused = FALSE;
 bool calculate_fire = TRUE;
 bool truecolor      = TRUE;
+int shift = 0;
 
 // D E F I N E S ////////////////////////////////////////////////////////////
 #define FIRE_W 800      // width of fire
@@ -90,16 +91,21 @@ inline void calc_fire(USINT *prev, USINT *curr)
 // D R A W  F I R E  ////////////////////////////////////////////////////////
 inline void draw_fire(USINT *fire, BITMAP *bitmap)
 {
+    int color_index = 0;
     if (truecolor) {
         for (int y = 0; y < FIRE_H; y++) {
             for (int x = 0; x < FIRE_W; x++) {
-                putpixel(bitmap, x, y, colors[int(get_fire(fire, x, y))]);
+                color_index = CLAMP(0, (get_fire(fire, x, y) + shift), 4096);
+                putpixel(bitmap, x, y, colors[color_index]);
             }
         }
     } else {
         for (int y = 0; y < FIRE_H; y++) {
             for (int x = 0; x < FIRE_W; x++) {
-                putpixel(bitmap, x, y, palette_color[int(get_fire(fire, x, y)) >> 4]);
+                color_index = CLAMP(0,
+                                    (get_fire(fire, x, y) + shift) >> 4,
+                                    256);
+                putpixel(bitmap, x, y, palette_color[color_index]);
             }
         }
     }
@@ -170,6 +176,26 @@ void do_fire()
             {
                 case KEY_ESC:
                     done = TRUE;
+                    break;
+
+                case KEY_PGUP:
+                    if (key_shifts & KB_CTRL_FLAG) {
+                        shift += 1;
+                    } else {
+                        shift += 10;
+                    }
+                    break;
+
+                case KEY_PGDN:
+                    if (key_shifts & KB_CTRL_FLAG) {
+                        shift -= 1;
+                    } else {
+                        shift -= 10;
+                    }
+                    break;
+
+                case KEY_HOME:
+                    shift = 0;
                     break;
 
                 case KEY_PRTSCR:
