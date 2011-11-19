@@ -139,7 +139,8 @@ void add_hotspot(USINT *fire, int x, int y, int hotspot_radius, int num_spots)
         int hotspot_x = rnd(hotspot_radius * 2) - hotspot_radius;
         int hotspot_y = rnd(hotspot_radius * 2) - hotspot_radius;
 
-        if (((hotspot_x * hotspot_x) + (hotspot_y * hotspot_y)) > (hotspot_radius * hotspot_radius))
+        if (((hotspot_x * hotspot_x) + (hotspot_y * hotspot_y)) >
+             (hotspot_radius * hotspot_radius))
         {
             hotspot_x /= 2;
             hotspot_y /= 2;
@@ -243,8 +244,10 @@ void do_fire()
                     break;
 
                 case KEY_1: // toggle grayscale palette
-                    colors = (colors == fire_colors ? gray_colors : fire_colors);
-                    palette = (palette == &fire_palette ? &gray_palette : &fire_palette);
+                    colors = (colors == fire_colors ?
+                              gray_colors : fire_colors);
+                    palette = (palette == &fire_palette ?
+                               &gray_palette : &fire_palette);
                     set_palette(*palette);
                     break;
 
@@ -268,19 +271,24 @@ void do_fire()
             {
                 for (int i = 0; i < NUM_HOTSPOTS; i++)
                 {
-                    hotspots[i].x += rnd(hotspots[i].speed*2) - hotspots[i].speed;
+                    hotspots[i].x += rnd(hotspots[i].speed*2) -
+                                     hotspots[i].speed;
                     if (hotspots[i].x <  0     ) hotspots[i].x += FIRE_W;
                     if (hotspots[i].x >= FIRE_W) hotspots[i].x -= FIRE_W;
 
-                    hotspots[i].y += rnd(hotspots[i].speed*2) - hotspots[i].speed;
-                    if (hotspots[i].y <  FIRE_H-HOTSPOT_REGION) hotspots[i].y += HOTSPOT_REGION;
-                    if (hotspots[i].y >= FIRE_H               ) hotspots[i].y -= HOTSPOT_REGION;
+                    hotspots[i].y += rnd(hotspots[i].speed*2)
+                                     - hotspots[i].speed;
+                    if (hotspots[i].y < FIRE_H-HOTSPOT_REGION)
+                        hotspots[i].y += HOTSPOT_REGION;
+                    if (hotspots[i].y >= FIRE_H)
+                        hotspots[i].y -= HOTSPOT_REGION;
 
                     add_hotspot(prev, hotspots[i].x, hotspots[i].y, 8, 100);
                 }
 
                 if (mouse_b & 1) {
-                    add_hotspot(prev, mouse_projection_x, mouse_projection_y, 8, 400);
+                    add_hotspot(prev, mouse_projection_x, mouse_projection_y,
+                                8, 400);
                 }
 
                 if (calculate_fire) {
@@ -302,9 +310,12 @@ void do_fire()
         release_bitmap(buf);
 
         acquire_screen();
-        stretch_blit(buf, screen, 0, 0, FIRE_W, FIRE_H, 0, 0, SCREEN_W, SCREEN_H);
+        stretch_blit(buf, screen, 0, 0, FIRE_W, FIRE_H,
+                                  0, 0, SCREEN_W, SCREEN_H);
 
-        int color_under_mouse = getpixel(screen, mouse_projection_x, mouse_projection_y);
+        int color_under_mouse =
+                getpixel(screen, mouse_projection_x, mouse_projection_y);
+
         textprintf_outline(screen, font, 10, 10, white, blue,
                       "Fire! by Leftium    [FPS:%3d]", fps);
 
@@ -318,7 +329,8 @@ void do_fire()
             text_y -= (text_y + 80) - SCREEN_H;
         }
 
-        int shifted_fire = get_fire(curr, mouse_projection_x, mouse_projection_y) + shift;
+        int shifted_fire =
+                get_fire(curr, mouse_projection_x, mouse_projection_y) + shift;
 
         textprintf_outline(screen, font, text_x, text_y, white, black,
                       "[%3d,%3d]  Shift: %d",
@@ -345,11 +357,12 @@ void do_fire()
 
         frames_done++;
 
-        if(ticks - old_ticks >= 10)//i.e. a second has passed since we last measured the frame rate
+        // A second has passed since we last measured the frame rate
+        if(ticks - old_ticks >= 10)
         {
             fps = frames_done;
-            //fps now holds the the number of frames done in the last second
-            //you can now output it using textout_ex et al.
+            // fps now holds the the number of frames done in the last second
+            // you can now output it using textout_ex et al.
 
             //reset for the next second
             frames_done = 0;
@@ -477,7 +490,8 @@ int main(void)
 
     LOCK_VARIABLE(ticks);
     LOCK_FUNCTION(ticker);
-    install_int_ex(ticker, BPS_TO_TIMER(10));//i.e. game time is in tenths of seconds
+    // i.e. game time is in tenths of seconds
+    install_int_ex(ticker, BPS_TO_TIMER(10));
 
     /* set up the keyboard handler */
     install_keyboard();
