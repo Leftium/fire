@@ -10,7 +10,7 @@ void textprintf_outline(BITMAP *bmp, FONT *f, int x, int y,
 
     va_list arg;
     va_start(arg, format);
-    vsnprintf(buffer, sizeof(buffer), format, arg);
+    vsnprintf_s(buffer, sizeof(buffer), format, arg);
     va_end(arg);
 
     textout_ex(bmp, f, buffer, x+1, y, bg, -1);
@@ -116,7 +116,7 @@ inline void draw_fire(USINT *fire, BITMAP *bitmap)
     if (truecolor) {
         for (int y = 0; y < FIRE_H; y++) {
             for (int x = 0; x < FIRE_W; x++) {
-                color_index = CLAMP(0, (get_fire(fire, x, y) + shift), 4096);
+                color_index = CLAMP(0, (get_fire(fire, x, y) + shift), 4095);
                 putpixel(bitmap, x, y, colors[color_index]);
             }
         }
@@ -125,7 +125,7 @@ inline void draw_fire(USINT *fire, BITMAP *bitmap)
             for (int x = 0; x < FIRE_W; x++) {
                 color_index = CLAMP(0,
                                     (get_fire(fire, x, y) + shift) >> 4,
-                                    256);
+                                    255);
                 putpixel(bitmap, x, y, palette_color[color_index]);
             }
         }
