@@ -323,41 +323,39 @@ void do_fire()
                 getpixel(screen, mouse_projection_x, mouse_projection_y);
 
         textprintf_outline(screen, font, 10, 10, white, blue,
-                      "Fire! by Leftium    [FPS:%3d]", fps);
+                "Fire! by Leftium    [FPS:%3d]  Shift: %d", fps, shift);
 
         int text_x = mouse_x + 16;
-        if ((text_x + (8 * 22)) > SCREEN_W) {
-            text_x -= (text_x + (8 * 22)) - SCREEN_W;
+        if ((text_x + (8 * 11)) > SCREEN_W) {
+            text_x -= (text_x + (8 * 11)) - SCREEN_W;
         }
 
         int text_y = mouse_y + 24;
-        if ((text_y + 80) > SCREEN_H) {
-            text_y -= (text_y + 80) - SCREEN_H;
+        if ((text_y + 70) > SCREEN_H) {
+            text_y -= (text_y + 70) - SCREEN_H;
         }
 
         int shifted_fire =
                 get_fire(curr, mouse_projection_x, mouse_projection_y) + shift;
 
         textprintf_outline(screen, font, text_x, text_y, white, black,
-                      "[%3d,%3d]  Shift: %d",
-                      mouse_projection_x, mouse_projection_y, shift);
+                      " [%3d %3d]",
+                      mouse_projection_x, mouse_projection_y);
 
         textprintf_outline(screen, font, text_x, text_y += 20, white, black,
-                "H:%5.1f %4d", shifted_fire * 100 / 4096.0, shifted_fire);
+                "%5.1f %4d", shifted_fire * 100 / 4096.0, shifted_fire);
 
         textprintf_outline(screen, font, text_x, text_y += 10, red, black,
-                "R:%5.1f %4d", getr(color_under_mouse) * 100 / 255.0,
+                "%5.1f %4d", getr(color_under_mouse) * 100 / 255.0,
                 getr(color_under_mouse));
 
         textprintf_outline(screen, font, text_x, text_y += 10, green, black,
-                "G:%5.1f %4d", getg(color_under_mouse) * 100 / 255.0,
+                "%5.1f %4d", getg(color_under_mouse) * 100 / 255.0,
                 getg(color_under_mouse));
 
         textprintf_outline(screen, font, text_x, text_y += 10, blue, black,
-                "B:%5.1f %4d", getb(color_under_mouse) * 100 / 255.0,
+                "%5.1f %4d", getb(color_under_mouse) * 100 / 255.0,
                 getb(color_under_mouse));
-
-
 
         release_screen();
 
