@@ -267,7 +267,8 @@ void do_fire()
         mouse_projection_x = FIRE_W * mouse_x / SCREEN_W;
         mouse_projection_y = FIRE_H * mouse_y / SCREEN_H;
         if (!paused) {
-            for (int r = 0; r < 3; r++)
+            // Hotspot Brownian movement
+            for (int r = 0; r < 9; r++)
             {
                 for (int i = 0; i < NUM_HOTSPOTS; i++)
                 {
@@ -282,22 +283,27 @@ void do_fire()
                         hotspots[i].y += HOTSPOT_REGION;
                     if (hotspots[i].y >= FIRE_H)
                         hotspots[i].y -= HOTSPOT_REGION;
-
-                    add_hotspot(prev, hotspots[i].x, hotspots[i].y, 8, 100);
                 }
 
-                if (mouse_b & 1) {
-                    add_hotspot(prev, mouse_projection_x, mouse_projection_y,
+                if (r % 3 == 0) {
+                    if (mouse_b & 1) {
+                        add_hotspot(prev, mouse_projection_x, mouse_projection_y,
                                 8, 400);
-                }
+                    }
 
-                if (calculate_fire) {
-                    calc_fire(prev, curr);
-                }
+                    for (int i = 0; i < NUM_HOTSPOTS; i++)
+                    {
+                        add_hotspot(prev, hotspots[i].x, hotspots[i].y, 8, 100);
+                    }
 
-                temp = curr;
-                curr = prev;
-                prev = temp;
+                    if (calculate_fire) {
+                        calc_fire(prev, curr);
+                    }
+
+                    temp = curr;
+                    curr = prev;
+                    prev = temp;
+                }
             }
         }
 
