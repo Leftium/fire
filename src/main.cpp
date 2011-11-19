@@ -1,5 +1,25 @@
+#include <stdio.h>
+#include <stdarg.h>
 #include <time.h>
 #include <allegro.h>
+
+void textprintf_outline(BITMAP *bmp, FONT *f, int x, int y,
+                        int color, int bg, const char *format, ...)
+{
+    char buffer[512];
+
+    va_list arg;
+    va_start(arg, format);
+    vsnprintf(buffer, sizeof(buffer), format, arg);
+    va_end(arg);
+
+    textout_ex(bmp, f, buffer, x+1, y, bg, -1);
+    textout_ex(bmp, f, buffer, x-1, y, bg, -1);
+    textout_ex(bmp, f, buffer, x, y+1, bg, -1);
+    textout_ex(bmp, f, buffer, x, y-1, bg, -1);
+    textout_ex(bmp, f, buffer, x, y, color, -1);
+}
+
 
 // Add a framerate counter //////////////////////////////////////////////////
 // based on: http://wiki.allegro.cc/index.php?title=Timers#FPS
@@ -22,6 +42,7 @@ void close_button_handler(void)
 }
 END_OF_FUNCTION(close_button_handler)
 
+int white, black, red, green, blue;
 
 PALETTE fire_palette, gray_palette;
 PALETTE *palette = &fire_palette;
@@ -282,7 +303,43 @@ void do_fire()
 
         acquire_screen();
         stretch_blit(buf, screen, 0, 0, FIRE_W, FIRE_H, 0, 0, SCREEN_W, SCREEN_H);
-        textprintf_ex(screen, font, 10, 10, makecol(255, 255, 255), -1, "Fire! by Leftium [FPS:%3d]", fps);
+
+        int color_under_mouse = getpixel(screen, mouse_projection_x, mouse_projection_y);
+        textprintf_outline(screen, font, 10, 10, white, blue,
+                      "Fire! by Leftium    [FPS:%3d]", fps);
+
+        int text_x = mouse_x + 16;
+        if ((text_x + (8 * 22)) > SCREEN_W) {
+            text_x -= (text_x + (8 * 22)) - SCREEN_W;
+        }
+
+        int text_y = mouse_y + 24;
+        if ((text_y + 80) > SCREEN_H) {
+            text_y -= (text_y + 80) - SCREEN_H;
+        }
+
+        int shifted_fire = get_fire(curr, mouse_projection_x, mouse_projection_y) + shift;
+
+        textprintf_outline(screen, font, text_x, text_y, white, black,
+                      "[%3d,%3d]  Shift: %d",
+                      mouse_projection_x, mouse_projection_y, shift);
+
+        textprintf_outline(screen, font, text_x, text_y += 20, white, black,
+                "H:%5.1f %4d", shifted_fire * 100 / 4096.0, shifted_fire);
+
+        textprintf_outline(screen, font, text_x, text_y += 10, red, black,
+                "R:%5.1f %4d", getr(color_under_mouse) * 100 / 255.0,
+                getr(color_under_mouse));
+
+        textprintf_outline(screen, font, text_x, text_y += 10, green, black,
+                "G:%5.1f %4d", getg(color_under_mouse) * 100 / 255.0,
+                getg(color_under_mouse));
+
+        textprintf_outline(screen, font, text_x, text_y += 10, blue, black,
+                "B:%5.1f %4d", getb(color_under_mouse) * 100 / 255.0,
+                getb(color_under_mouse));
+
+
 
         release_screen();
 
@@ -468,6 +525,12 @@ int main(void)
     enable_hardware_cursor();
     select_mouse_cursor(MOUSE_CURSOR_ARROW);
     show_mouse(screen);
+
+    white = makecol(255, 255, 255);
+    black = makecol(0, 0, 0);
+    red = makecol(255, 0, 0);
+    green = makecol(0, 255, 0);
+    blue = makecol(16, 64, 255);
 
     init_fire_palette(fire_palette);
     init_gray_palette(gray_palette);
